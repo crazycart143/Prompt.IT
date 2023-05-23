@@ -1,0 +1,6 @@
+To get next auth secret
+
+go to https://www.cryptool.org/en/cto/openssl
+and type openssl rand -base64 32 
+and copy the random generated output to next auth secret like 
+zhU0gezxXGecMx8gIn0cT7MtwcK0XovZhg+xp9UsGns=
