@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import User from "@models/user";
-import { connectToDb } from "@utils/mongodb";
+import { connectToDb } from "@utils/database";
 
 const handler = NextAuth({
   providers: [
@@ -10,6 +10,7 @@ const handler = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
+  // get data about user everytime
   async session({ session }) {
     const sessionUser = await User.findOne({
       email: session.user.email,
