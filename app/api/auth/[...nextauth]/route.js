@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+
 import User from "@models/user";
 import { connectToDb } from "@utils/database";
 
@@ -10,35 +11,36 @@ const handler = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
-  // get data about user everytime
-  async session({ session }) {
-    const sessionUser = await User.findOne({
-      email: session.user.email,
-    });
+  callbacks: {
+    async session({ session }) {
+      // store the user id from MongoDB to session
+      const sessionUser = await User.findOne({ email: session.user.email });
+      session.user.id = sessionUser._id.toString();
 
-    session.user.id = sessionUser._id.toString();
-  },
-  async signIn({ profile }) {
-    try {
-      await connectToDb();
+      return session;
+    },
+    async signIn({ account, profile, user, credentials }) {
+      try {
+        await connectToDb();
 
-      // check if user already exists
-      const userExists = await User.findOne({ email: profile.email });
+        // check if user already exists
+        const userExists = await User.findOne({ email: profile.email });
 
-      //if not, create new user
-      if (!userExists) {
-        await User.create({
-          email: profile.email,
-          username: profile.name.replace(" ", "").toLowerCase(),
-          image: profile.picture,
-        });
+        // if not, create a new document and save user in MongoDB
+        if (!userExists) {
+          await User.create({
+            email: profile.email,
+            username: profile.name.replace(" ", "").toLowerCase(),
+            image: profile.picture,
+          });
+        }
+
+        return true;
+      } catch (error) {
+        console.log("Error checking if user exists: ", error.message);
+        return false;
       }
-
-      return true;
-    } catch (error) {
-      console.log(error);
-      return false;
-    }
+    },
   },
 });
 
