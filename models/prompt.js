@@ -3,7 +3,7 @@ import { Schema, model, models } from "mongoose";
 const PromptSchema = new Schema({
   creator: {
     type: Schema.Types.ObjectId,
-    ref: "User", //one to many relationship //one user can create many prompts
+    ref: "User", // one to many relationship // one user can create many prompts
   },
   prompt: {
     type: String,

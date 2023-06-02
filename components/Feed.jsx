@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 
 import PromptCard from "./PromptCard";
-import Prompt from "@models/prompt";
 
 const PromptCardList = ({ data, handleTagClick }) => {
   return (
@@ -20,21 +19,30 @@ const PromptCardList = ({ data, handleTagClick }) => {
 };
 
 const Feed = () => {
-  const [searchText, setsearchText] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [searchTimeout, setSearchTimeout] = useState(null);
+  const [searchedResults, setSearchedResults] = useState([]);
   const [posts, setPosts] = useState([]);
 
   const handleSearchChange = (e) => {};
 
+  const fetchPosts = async () => {
+    const response = await fetch("/api/prompt");
+    const data = await response.json();
+
+    setPosts(data);
+  };
+
   useEffect(() => {
-    const fetchPosts = async () => {
-      const response = await fetch("/api/prompt");
-      const data = await response.json();
-
-      setPosts(data);
-    };
-
     fetchPosts();
   }, []);
+
+  const handleTagClick = (tagName) => {
+    setSearchText(tagName);
+
+    const searchResult = filterPrompts(tagName);
+    setSearchedResults(searchResult);
+  };
 
   return (
     <section className="feed">
@@ -49,7 +57,7 @@ const Feed = () => {
         />
       </form>
 
-      <PromptCardList data={posts} handleTagClick={() => {}} />
+      <PromptCardList data={posts} handleTagClick={handleTagClick} />
     </section>
   );
 };
