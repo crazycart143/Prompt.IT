@@ -1,9 +1,9 @@
 import Prompt from "@models/prompt";
-import { connectToDB } from "@utils/database";
+import { connectToDb } from "@utils/database";
 
 export const GET = async (request, { params }) => {
   try {
-    await connectToDB();
+    await connectToDb();
 
     const prompt = await Prompt.findById(params.id).populate("creator");
     if (!prompt) return new Response("Prompt Not Found", { status: 404 });
@@ -18,7 +18,7 @@ export const PATCH = async (request, { params }) => {
   const { prompt, tag } = await request.json();
 
   try {
-    await connectToDB();
+    await connectToDb();
 
     // Find the existing prompt by ID
     const existingPrompt = await Prompt.findById(params.id);
@@ -41,7 +41,7 @@ export const PATCH = async (request, { params }) => {
 
 export const DELETE = async (request, { params }) => {
   try {
-    await connectToDB();
+    await connectToDb();
 
     // Find the prompt by ID and remove it
     await Prompt.findByIdAndRemove(params.id);
