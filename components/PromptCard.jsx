@@ -64,15 +64,15 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
           />
         </div>
       </div>
-
       <p className="my-4 text-sm text-gray-700 font-satoshi">{post.prompt}</p>
       <p
         className="text-sm cursor-pointer font-inter blue_gradient"
         onClick={() => handleTagClick && handleTagClick(post.tag)}
       >
-        #{post.tag}
+        {post.tag}
       </p>
-
+      {/* if the user logged in is the creator of the post and he is at the
+      profile page then */}
       {session?.user.id === post.creator._id && pathName === "/profile" && (
         <div className="gap-4 pt-3 mt-5 border-t border-gray-100 flex-center">
           <p
