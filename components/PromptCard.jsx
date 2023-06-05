@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
@@ -11,10 +11,12 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
   const router = useRouter();
 
   const [copied, setCopied] = useState("");
+  const [like, setLike] = useState(post.likes ? post.likes.length : post.likes);
+  const [dislike, setDislike] = useState(
+    post.dislikes ? post.dislikes.length : post.dislikes
+  );
 
   const handleProfileClick = () => {
-    console.log(post);
-
     if (post.creator._id === session?.user.id) return router.push("/profile");
 
     router.push(`/profile/${post.creator._id}?name=${post.creator.username}`);
@@ -24,6 +26,50 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
     setCopied(post.prompt);
     navigator.clipboard.writeText(post.prompt);
     setTimeout(() => setCopied(false), 3000);
+  };
+
+  const handleLike = async () => {
+    try {
+      const response = await fetch(`/api/prompt/${post._id}/like`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: session?.user.id,
+          postId: post._id, // Add the post ID
+        }),
+      });
+      if (response.ok) {
+        const { likes } = await response.json();
+        setLike(likes.length);
+        window.reload();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleDislike = async () => {
+    try {
+      const response = await fetch(`/api/prompt/${post._id}/dislike`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: session?.user.id,
+          postId: post._id, // Add the post ID
+        }),
+      });
+      if (response.ok) {
+        const { dislike } = await response.json();
+        setDislike(dislike.length);
+        router.reload();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -71,6 +117,45 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
       >
         {post.tag}
       </p>
+      {/* Like and Dislike buttons */}
+      <div className="gap-4 pt-3 mt-5 border-t border-gray-100 flex-center">
+        <button
+          className={`text-sm  font-inter flex ${
+            !session
+              ? "opacity-50 cursor-not-allowed "
+              : "opacity-100 cursor-pointer"
+          }`}
+          onClick={handleLike}
+          disabled={!session}
+        >
+          <Image
+            src="/assets/icons/like-button.svg"
+            height={20}
+            width={20}
+            alt="like-button"
+            className="mr-3"
+          />
+          <span>{like}</span>
+        </button>
+        <button
+          className={`text-sm cursor-pointer font-inter flex ${
+            !session
+              ? "opacity-50 cursor-not-allowed"
+              : "opacity-100 cursor-pointer"
+          }`}
+          onClick={handleDislike}
+          disabled={!session}
+        >
+          <Image
+            src="/assets/icons/dislike-button.svg"
+            height={20}
+            width={20}
+            alt="like-button"
+            className="mr-3 transform rotate-180"
+          />
+          <span>{dislike}</span>
+        </button>
+      </div>
       {/* if the user logged in is the creator of the post and he is at the
       profile page then */}
       {session?.user.id === post.creator._id && pathName === "/profile" && (

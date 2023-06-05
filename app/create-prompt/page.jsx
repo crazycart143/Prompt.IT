@@ -10,7 +10,12 @@ const CreatePrompt = () => {
   const { data: session } = useSession();
 
   const [submitting, setSubmitting] = useState(false);
-  const [post, setPost] = useState({ prompt: "", tag: "" });
+  const [post, setPost] = useState({
+    prompt: "",
+    tag: "",
+    likes: 0,
+    dislikes: 0,
+  });
   const createPrompt = async (e) => {
     e.preventDefault();
     setSubmitting(true);
@@ -22,6 +27,8 @@ const CreatePrompt = () => {
           prompt: post.prompt,
           userId: session?.user.id,
           tag: post.tag,
+          likes: post.likes,
+          dislikes: post.dislikes,
         }),
       });
 

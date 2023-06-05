@@ -5,7 +5,10 @@ export const GET = async (request, { params }) => {
   try {
     await connectToDb();
 
-    const prompt = await Prompt.findById(params.id).populate("creator");
+    const prompt = await Prompt.findById(params.id)
+      .populate("creator")
+      .populate("likes")
+      .populate("dislikes");
     if (!prompt) return new Response("Prompt Not Found", { status: 404 });
 
     return new Response(JSON.stringify(prompt), { status: 200 });
@@ -15,8 +18,7 @@ export const GET = async (request, { params }) => {
 };
 
 export const PATCH = async (request, { params }) => {
-  const { prompt, tag } = await request.json();
-
+  const { prompt, tag, likes, dislikes } = await request.json();
   try {
     await connectToDb();
 
@@ -35,6 +37,7 @@ export const PATCH = async (request, { params }) => {
 
     return new Response("Successfully updated the Prompts", { status: 200 });
   } catch (error) {
+    console.error(error);
     return new Response("Error Updating Prompt", { status: 500 });
   }
 };
