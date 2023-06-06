@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
@@ -37,13 +37,16 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
         },
         body: JSON.stringify({
           userId: session?.user.id,
-          postId: post._id, // Add the post ID
+          postId: post._id,
+          removeLike: post.likes.includes(session?.user.id), // Check if the user already liked the post
         }),
       });
       if (response.ok) {
         const { likes } = await response.json();
         setLike(likes.length);
-        window.reload();
+        router.reload();
+      } else if (response.status === 400) {
+        console.log("hakdog");
       }
     } catch (error) {
       console.log(error);
@@ -59,12 +62,13 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
         },
         body: JSON.stringify({
           userId: session?.user.id,
-          postId: post._id, // Add the post ID
+          postId: post._id,
+          removeLike: post.likes.includes(session?.user.id), // Check if the user already liked the post
         }),
       });
       if (response.ok) {
-        const { dislike } = await response.json();
-        setDislike(dislike.length);
+        const { dislikes } = await response.json();
+        setDislike(dislikes.length);
         router.reload();
       }
     } catch (error) {

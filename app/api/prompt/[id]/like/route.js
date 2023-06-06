@@ -2,7 +2,8 @@ import Prompt from "@models/prompt";
 import { connectToDb } from "@utils/database";
 
 export const POST = async (request, { params }) => {
-  const { prompt, tag, likes, dislikes, userId } = await request.json();
+  const { prompt, tag, likes, dislikes, userId, removeLike } =
+    await request.json();
 
   try {
     await connectToDb();
@@ -10,18 +11,28 @@ export const POST = async (request, { params }) => {
     // Find the existing prompt by ID
     const existingPrompt = await Prompt.findById(params.id);
 
-    if (existingPrompt.likes.includes(userId)) {
-      return new Response("User has already liked the post", { status: 400 });
+    if (removeLike && existingPrompt.likes.includes(userId)) {
+      // Remove the like if the user already liked the post
+      existingPrompt.likes.pull(userId);
+    } else {
+      // Add the like if the user hasn't liked the post
+      existingPrompt.likes.push(userId);
     }
-    // Update the prompt with new data
 
-    // Ensure likes and dislikes are arrays
-    existingPrompt.likes.push(userId);
     await existingPrompt.save();
 
-    return new Response("Successfully liked the post", { status: 200 });
+    return new Response(
+      JSON.stringify({ message: "Successfully updated the like status" }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
   } catch (error) {
     console.error(error);
-    return new Response("Error updating Prompt", { status: 500 });
+    return new Response(
+      JSON.stringify({ error: "Error updating like status" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 };
