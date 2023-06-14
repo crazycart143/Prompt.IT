@@ -45,6 +45,27 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
         const { likes } = await response.json();
         setLike(likes.length);
         router.reload();
+
+        // Notify the post creator if the user is not the creator
+        if (session?.user.id !== post.creator._id) {
+          const notificationResponse = await fetch("/api/notification/new", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              recipientId: post.creator._id,
+              message: `${session?.user.username} liked your post: ${post.prompt}`,
+              likedBy: {
+                userId: session?.user.id,
+                username: session?.user.username,
+              },
+            }),
+          });
+          if (notificationResponse.ok) {
+            console.log("Notification sent to the post creator");
+          }
+        }
       } else if (response.status === 400) {
         console.log("hakdog");
       }

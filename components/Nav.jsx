@@ -10,6 +10,8 @@ const Nav = () => {
 
   const [providers, setProviders] = useState(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
+  const [notificationDropdown, setNotificationDropdown] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -52,6 +54,32 @@ const Nav = () => {
                 alt="profile"
               />
             </Link>
+            <div className="relative flex-center">
+              <button
+                className="relative cursor-pointer flex-center"
+                onClick={() => setNotificationDropdown(!notificationDropdown)}
+              >
+                {notificationCount > 0 && (
+                  <div className="bg-black rounded-full w-[24px] h-[24px] absolute -right-2 top-0 text-white text-[10px] flex-center">
+                    {notificationCount}
+                  </div>
+                )}
+
+                <Image
+                  src="/assets/icons/notification-icon.svg"
+                  height={32}
+                  width={32}
+                  alt="notification-icon"
+                />
+              </button>
+              {notificationDropdown && (
+                <div className="notification">
+                  <h3 className="mt-5 text-[24px] font-extrabold leading-[1.15] text-black">
+                    Notification
+                  </h3>
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           <>

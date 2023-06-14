@@ -1,4 +1,5 @@
 import Prompt from "@models/prompt";
+import Notification from "@models/notification";
 import { connectToDb } from "@utils/database";
 
 export const POST = async (request, { params }) => {
@@ -14,9 +15,26 @@ export const POST = async (request, { params }) => {
     if (removeLike && existingPrompt.likes.includes(userId)) {
       // Remove the like if the user already liked the post
       existingPrompt.likes.pull(userId);
+
+      await Notification.deleteOne({
+        recipient: existingPrompt.creator, // Assuming 'userId' is the creator's ID
+        "likedBy.userId": userId,
+      });
     } else {
       // Add the like if the user hasn't liked the post
       existingPrompt.likes.push(userId);
+
+      // Create a notification for the post creator
+      const notification = new Notification({
+        recipient: existingPrompt.creator, // Assuming 'userId' is the creator's ID
+        message: `Your post has been liked by ${userId}.`,
+        likedBy: {
+          userId: userId,
+          username: "Username of the liking user", // Replace with the actual username
+        },
+      });
+
+      await notification.save();
     }
 
     await existingPrompt.save();
