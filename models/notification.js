@@ -10,6 +10,15 @@ const NotificationSchema = new Schema({
     type: String,
     required: [true, "Message is required."],
   },
+  createdAt: {
+    type: Number,
+    required: [true, "CreatedAt is required."],
+  },
+  viewed: {
+    type: Boolean,
+    default: false,
+    required: [true, "Viewed is required."],
+  },
   likedBy: {
     userId: {
       type: Schema.Types.ObjectId,

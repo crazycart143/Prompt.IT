@@ -47,57 +47,6 @@ const MyProfile = () => {
     }
   };
 
-  const handleLike = async (post) => {
-    try {
-      const response = await fetch(`/api/prompt/${post._id}`, {
-        method: "PATCH",
-        body: JSON.stringify({ action: "like" }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        const updatedPost = data.data;
-        const updatedPosts = myPosts.map((item) =>
-          item._id === updatedPost._id ? updatedPost : item
-        );
-
-        setMyPosts(updatedPosts);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const handleDislike = async (post) => {
-    console.log("running");
-    try {
-      const response = await fetch(`/api/prompt/${post._id}`, {
-        method: "POST",
-        body: JSON.stringify({ action: "dislike" }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        const updatedPost = data.data;
-        const updatedPosts = myPosts.map((item) =>
-          item._id === updatedPost._id ? updatedPost : item
-        );
-
-        setMyPosts(updatedPosts);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <Profile
       name="My"
@@ -105,8 +54,6 @@ const MyProfile = () => {
       data={myPosts}
       handleEdit={handleEdit}
       handleDelete={handleDelete}
-      handleLike={handleLike}
-      handleDislike={handleDislike}
     />
   );
 };
