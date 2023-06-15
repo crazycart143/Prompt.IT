@@ -38,13 +38,13 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
         },
         body: JSON.stringify({
           userId: session?.user.id,
+          username: session?.user.name,
           postId: post._id,
           removeLike: post.likes.includes(session?.user.id), // Check if the user already liked the post
         }),
       });
       if (response.ok) {
         location.reload();
-        console.log("HAHAHAHA");
       }
     } catch (error) {
       console.log(error);
@@ -61,12 +61,11 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
         body: JSON.stringify({
           userId: session?.user.id,
           postId: post._id,
-          removeLike: post.likes.includes(session?.user.id), // Check if the user already liked the post
+          removeDislike: post.likes.includes(session?.user.id), // Check if the user already liked the post
         }),
       });
       if (response.ok) {
-        const { dislikes } = await response.json();
-        setDislike(dislikes.length);
+        location.reload();
       }
     } catch (error) {
       console.log(error);
@@ -147,8 +146,11 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
               ? "opacity-50 cursor-not-allowed"
               : "opacity-100 cursor-pointer"
           }`}
-          onClick={handleDislike}
-          disabled={!session}
+          onClick={() => {
+            handleDislike();
+            setIsLoading(true);
+          }}
+          disabled={!session || isLoading}
         >
           <Image
             src="/assets/icons/dislike-button.svg"

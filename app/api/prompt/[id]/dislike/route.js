@@ -2,8 +2,7 @@ import Prompt from "@models/prompt";
 import { connectToDb } from "@utils/database";
 
 export const POST = async (request, { params }) => {
-  const { prompt, tag, likes, dislikes, userId, removeLike } =
-    await request.json();
+  const { userId, removeDislike } = await request.json();
 
   try {
     await connectToDb();
@@ -11,11 +10,11 @@ export const POST = async (request, { params }) => {
     // Find the existing prompt by ID
     const existingPrompt = await Prompt.findById(params.id);
 
-    if (removeLike && existingPrompt.dislikes.includes(userId)) {
-      // Remove the like if the user already liked the post
+    if (removeDislike && existingPrompt.dislikes.includes(userId)) {
+      // Remove the dislike if the user already disliked the prompt
       existingPrompt.dislikes.pull(userId);
-    } else {
-      // Add the like if the user hasn't liked the post
+    } else if (!existingPrompt.dislikes.includes(userId)) {
+      // Add the dislike if the user hasn't disliked the prompt
       existingPrompt.dislikes.push(userId);
     }
 
