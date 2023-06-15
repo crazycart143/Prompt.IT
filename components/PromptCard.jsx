@@ -15,6 +15,7 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
   const [dislike, setDislike] = useState(
     post.dislikes ? post.dislikes.length : post.dislikes
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleProfileClick = () => {
     if (post.creator._id === session?.user.id) return router.push("/profile");
@@ -42,32 +43,8 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
         }),
       });
       if (response.ok) {
-        const { likes } = await response.json();
-        setLike(likes.length);
-        router.reload();
-
-        // Notify the post creator if the user is not the creator
-        if (session?.user.id !== post.creator._id) {
-          const notificationResponse = await fetch("/api/notification/new", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              recipientId: post.creator._id,
-              message: `${session?.user.username} liked your post: ${post.prompt}`,
-              likedBy: {
-                userId: session?.user.id,
-                username: session?.user.username,
-              },
-            }),
-          });
-          if (notificationResponse.ok) {
-            console.log("Notification sent to the post creator");
-          }
-        }
-      } else if (response.status === 400) {
-        console.log("hakdog");
+        location.reload();
+        console.log("HAHAHAHA");
       }
     } catch (error) {
       console.log(error);
@@ -90,7 +67,6 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
       if (response.ok) {
         const { dislikes } = await response.json();
         setDislike(dislikes.length);
-        router.reload();
       }
     } catch (error) {
       console.log(error);
@@ -150,8 +126,11 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
               ? "opacity-50 cursor-not-allowed "
               : "opacity-100 cursor-pointer"
           }`}
-          onClick={handleLike}
-          disabled={!session}
+          onClick={() => {
+            handleLike();
+            setIsLoading(true);
+          }}
+          disabled={!session || isLoading}
         >
           <Image
             src="/assets/icons/like-button.svg"
