@@ -3,11 +3,8 @@ import Provider from "@components/Provider";
 import "@styles/globals.css";
 
 export const metadata = {
-  title: "Promptopia",
-  description: "Discover & Share AI Prompts",
-  icons: {
-    icon: "public/favicon.ico",
-  },
+  title: "Prompt.IT",
+  description: "Share your useful prompts to the world!",
 };
 
 const RootLayout = ({ children }) => {

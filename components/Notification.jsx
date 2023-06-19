@@ -120,12 +120,12 @@ const Notification = () => {
         />
       </button>
       {notificationDropdown && (
-        <div className="z-50 notification">
+        <div className="z-50 overflow-y-auto notification">
           <h3 className="mt-5 text-[24px] font-extrabold leading-[1.15] text-black">
             Notifications
           </h3>
           {notifications && notifications.length > 0 ? (
-            notifications.reverse().map((notification) => (
+            [...notifications].reverse().map((notification) => (
               <div
                 className="flex items-center justify-center gap-x-4"
                 key={notification._id}
