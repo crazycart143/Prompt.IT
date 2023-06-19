@@ -100,7 +100,7 @@ const Notification = () => {
   return (
     <div className="relative flex-center">
       <button
-        className="relative cursor-pointer flex-center"
+        className="relative outline-none cursor-pointer flex-center"
         onClick={() => {
           setNotificationDropdown(!notificationDropdown);
           handleNotificationClick();

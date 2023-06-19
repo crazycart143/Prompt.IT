@@ -121,7 +121,7 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
       {/* Like and Dislike buttons */}
       <div className="gap-4 pt-3 mt-5 border-t border-gray-100 flex-center">
         <button
-          className={`text-sm  font-inter flex ${
+          className={`text-sm  font-inter flex outline-none ${
             !session
               ? "opacity-50 cursor-not-allowed "
               : "opacity-100 cursor-pointer"
@@ -137,12 +137,12 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
             height={20}
             width={20}
             alt="like-button"
-            className="mr-3"
+            className="mr-3 "
           />
           <span>{like}</span>
         </button>
         <button
-          className={`text-sm cursor-pointer font-inter flex ${
+          className={`text-sm cursor-pointer font-inter flex outline-none ${
             !session
               ? "opacity-50 cursor-not-allowed"
               : "opacity-100 cursor-pointer"
