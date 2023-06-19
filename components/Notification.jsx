@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
 
@@ -13,7 +13,7 @@ const Notification = () => {
   const [viewed, setViewed] = useState(false);
 
   const { data: session } = useSession();
-
+  const notificationRef = useRef(null);
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
@@ -65,7 +65,7 @@ const Notification = () => {
     }
   };
 
-  const handleNotificationClick = async () => {
+  const handleNotificationClick = async (event) => {
     if (!viewed) {
       try {
         // Check if any unviewed notifications exist
@@ -97,6 +97,22 @@ const Notification = () => {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target)
+      ) {
+        setNotificationDropdown(false);
+      }
+    };
+
+    document.body.addEventListener("click", handleClickOutside);
+    return () => {
+      document.body.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="relative flex-center">
       <button
@@ -120,7 +136,10 @@ const Notification = () => {
         />
       </button>
       {notificationDropdown && (
-        <div className="z-50 overflow-y-auto notification">
+        <div
+          ref={notificationRef}
+          className="z-50 overflow-y-auto notification"
+        >
           <h3 className="mt-5 text-[24px] font-extrabold leading-[1.15] text-black">
             Notifications
           </h3>
