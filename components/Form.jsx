@@ -1,22 +1,28 @@
 import Link from "next/link";
 
 const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
+  const handleTagChange = (e) => {
+    const tagValue = e.target.value;
+    const formattedTag = tagValue.startsWith("#") ? tagValue : `#${tagValue}`;
+    setPost({ ...post, tag: formattedTag });
+  };
+
   return (
     <section className="flex-col w-full max-w-full flex-start">
       <h1 className="text-left head_text">
         {" "}
         <span className="blue_gradient"> {type} Post </span>{" "}
       </h1>
-      <p className="desc text-left max-w-md">
+      <p className="max-w-md text-left desc">
         {type} and share amazing prompts with the world, and let your
         imagination run wild with any AI-powered platform.
       </p>
       <form
         onSubmit={handleSubmit}
-        className="mt-10 w-full max-w-2xl flex flex-col glassmorphism"
+        className="flex flex-col w-full max-w-2xl mt-10 glassmorphism"
       >
         <label>
-          <span className="font-satoshi font-semibold text-base text-gray-700">
+          <span className="text-base font-semibold text-gray-700 font-satoshi">
             Your AI Prompt
           </span>
           <textarea
@@ -28,7 +34,7 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
           ></textarea>
         </label>
         <label>
-          <span className="font-satoshi font-semibold text-base text-gray-700">
+          <span className="text-base font-semibold text-gray-700 font-satoshi">
             Tag
             <span className="font-normal">
               {" "}
@@ -37,14 +43,14 @@ const Form = ({ type, post, setPost, submitting, handleSubmit }) => {
           </span>
           <input
             value={post.tag}
-            onChange={(e) => setPost({ ...post, tag: e.target.value })}
+            onChange={handleTagChange}
             placeholder="#tag"
             required
             className="form_input"
           ></input>
         </label>
-        <div className="flex-end mx-3 mt-5 gap-4">
-          <Link href="/" className="text-gray-500 text-sm">
+        <div className="gap-4 mx-3 mt-5 flex-end">
+          <Link href="/" className="text-sm text-gray-500">
             {" "}
             Cancel{" "}
           </Link>
