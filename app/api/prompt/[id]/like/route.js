@@ -3,7 +3,8 @@ import Notification from "@models/notification";
 import { connectToDb } from "@utils/database";
 
 export const POST = async (request, { params }) => {
-  const { userId, removeLike, username, date, viewed } = await request.json();
+  const { userId, removeLike, username, date, viewed, profilePicture } =
+    await request.json();
 
   try {
     await connectToDb();
@@ -26,9 +27,10 @@ export const POST = async (request, { params }) => {
       // Create a notification for the post creator
       const notification = new Notification({
         recipient: existingPrompt.creator, // Assuming 'userId' is the creator's ID
-        message: `Your post has been liked by ${username}.`,
+        message: `${username} liked your post: "${existingPrompt.prompt}."`,
         createdAt: date,
         viewed: viewed,
+        profilePicture: profilePicture,
         likedBy: {
           userId: userId,
           username: username, // Replace with the actual username

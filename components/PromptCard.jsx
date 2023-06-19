@@ -6,8 +6,6 @@ import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 
 const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
-  const date = new Date();
-
   const { data: session } = useSession();
   const pathName = usePathname();
   const router = useRouter();
@@ -18,7 +16,6 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
     post.dislikes ? post.dislikes.length : post.dislikes
   );
   const [isLoading, setIsLoading] = useState(false);
-  const [elapsedTime, setElapsedTime] = useState("");
 
   const handleProfileClick = () => {
     if (post.creator._id === session?.user.id) return router.push("/profile");
@@ -43,8 +40,9 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
           userId: session?.user.id,
           username: session?.user.name,
           removeLike: post.likes.includes(session?.user.id), // Check if the user already liked the post
-          date: date.getDate(),
+          date: new Date(),
           viewed: false,
+          profilePicture: session?.user.image,
         }),
       });
       if (response.ok) {

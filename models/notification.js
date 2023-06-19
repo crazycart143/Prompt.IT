@@ -11,13 +11,18 @@ const NotificationSchema = new Schema({
     required: [true, "Message is required."],
   },
   createdAt: {
-    type: Number,
+    type: Date,
+    default: Date.now(),
     required: [true, "CreatedAt is required."],
   },
   viewed: {
     type: Boolean,
     default: false,
     required: [true, "Viewed is required."],
+  },
+  profilePicture: {
+    type: String, // Assuming the profile picture is stored as a URL
+    required: [true, "Profile picture is required."],
   },
   likedBy: {
     userId: {
