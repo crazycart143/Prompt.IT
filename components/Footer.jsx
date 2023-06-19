@@ -14,10 +14,11 @@ const Footer = () => {
         />
         <p className="logo_text">Prompt.IT</p>
       </div>
-
-      <h1>Made by: Keanu John Lariosa</h1>
-      <p>All rights reserved.</p>
-      <p>2023</p>
+      <div className="text-[#505A68] flex justify-center items-center flex-col">
+        <h1>Made by: Keanu John Lariosa</h1>
+        <p>All rights reserved.</p>
+        <p>2023</p>
+      </div>
     </div>
   );
 };
