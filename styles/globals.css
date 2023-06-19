@@ -141,7 +141,7 @@
 }
 
 .notification {
-  @apply absolute right-0 top-full mt-3 w-full max-h-[90vh] p-5 pt-1 rounded-lg bg-white min-w-[344px] flex flex-col gap-2 justify-start items-start;
+  @apply absolute right-0 top-full mt-3 w-full max-h-[90vh] sm:max-h-[80vh] p-5 pt-1 rounded-lg bg-white min-w-[344px] flex flex-col gap-2 justify-start items-start;
 }
 
 .dropdown {
