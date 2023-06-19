@@ -41,7 +41,6 @@ const PromptCard = ({ post, handleEdit, handleDelete, handleTagClick }) => {
           username: session?.user.name,
           removeLike: post.likes.includes(session?.user.id), // Check if the user already liked the post
           date: new Date(),
-          viewed: false,
           profilePicture: session?.user.image,
         }),
       });

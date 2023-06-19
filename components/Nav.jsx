@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 import Notification from "./Notification";
+import PromptCard from "./PromptCard";
 
 const Nav = () => {
   const { data: session } = useSession();
@@ -77,7 +78,7 @@ const Nav = () => {
       {/* Mobile Navigation */}
       <div className="relative flex sm:hidden">
         {session?.user ? (
-          <div className="flex">
+          <div className="flex gap-x-4">
             <Image
               src={session?.user.image}
               width={37}
@@ -86,6 +87,7 @@ const Nav = () => {
               alt="profile"
               onClick={() => setToggleDropdown(!toggleDropdown)}
             />
+            <Notification />
 
             {toggleDropdown && (
               <div className="dropdown">

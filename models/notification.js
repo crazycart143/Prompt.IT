@@ -18,7 +18,6 @@ const NotificationSchema = new Schema({
   viewed: {
     type: Boolean,
     default: false,
-    required: [true, "Viewed is required."],
   },
   profilePicture: {
     type: String, // Assuming the profile picture is stored as a URL

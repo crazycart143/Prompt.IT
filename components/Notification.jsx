@@ -10,6 +10,7 @@ const Notification = () => {
 
   const [notifications, setNotifications] = useState([]);
   const [notificationCount, setNotificationCount] = useState(0);
+  const [viewed, setViewed] = useState(false);
 
   const { data: session } = useSession();
 
@@ -22,7 +23,12 @@ const Notification = () => {
         if (response.ok) {
           const data = await response.json();
           setNotifications(data);
-          setNotificationCount(data.length);
+
+          // Count the number of unviewed notifications
+          const unviewedNotificationsCount = data.filter(
+            (notification) => !notification.viewed
+          ).length;
+          setNotificationCount(unviewedNotificationsCount);
         }
       } catch (error) {
         console.error("Failed to fetch notifications:", error);
@@ -59,13 +65,48 @@ const Notification = () => {
     }
   };
 
+  const handleNotificationClick = async () => {
+    if (!viewed) {
+      try {
+        // Check if any unviewed notifications exist
+        const unviewedNotifications = notifications.filter(
+          (notification) => !notification.viewed
+        );
+
+        if (unviewedNotifications.length > 0) {
+          const response = await fetch(
+            `/api/users/${session?.user.id}/notifications/update`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (response.ok) {
+            setViewed(true);
+          } else {
+            console.log("error updating the notification");
+          }
+        }
+      } catch (error) {
+        // Handle fetch error
+        console.error(error);
+      }
+    }
+  };
+
   return (
     <div className="relative flex-center">
       <button
         className="relative cursor-pointer flex-center"
-        onClick={() => setNotificationDropdown(!notificationDropdown)}
+        onClick={() => {
+          setNotificationDropdown(!notificationDropdown);
+          handleNotificationClick();
+        }}
       >
-        {notificationCount > 0 && (
+        {notificationCount > 0 && !viewed && (
           <div className="bg-black rounded-full w-[24px] h-[24px] absolute -right-2 top-0 text-white text-[10px] flex-center">
             {notificationCount}
           </div>
@@ -79,28 +120,28 @@ const Notification = () => {
         />
       </button>
       {notificationDropdown && (
-        <div className="notification">
+        <div className="z-50 notification">
           <h3 className="mt-5 text-[24px] font-extrabold leading-[1.15] text-black">
             Notifications
           </h3>
           {notifications && notifications.length > 0 ? (
-            notifications.map((notification) => (
+            notifications.reverse().map((notification) => (
               <div
-                className="flex gap-x-4 justify-center items-center"
+                className="flex items-center justify-center gap-x-4"
                 key={notification._id}
               >
-                <Image
+                <img
                   src={notification.profilePicture}
                   alt={notification._id}
                   width={56}
                   height={56}
-                  className="rounded-full w-[56px] h-[56px] "
+                  className="rounded-full w-[56px] h-[56px]"
                 />
-                <div>
-                  <h1 className="text-[15px]">
+                <div className="flex flex-col gap-y-2 md:gap-0">
+                  <h1 className="text-[14px]">
                     {truncateText(notification.message, 94)}
                   </h1>
-                  <p className="text-gray-500 text-xs">
+                  <p className="text-xs text-gray-500">
                     {getTimeAgo(notification.createdAt)}
                   </p>
                 </div>

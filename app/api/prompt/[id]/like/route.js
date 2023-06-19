@@ -3,7 +3,7 @@ import Notification from "@models/notification";
 import { connectToDb } from "@utils/database";
 
 export const POST = async (request, { params }) => {
-  const { userId, removeLike, username, date, viewed, profilePicture } =
+  const { userId, removeLike, username, date, profilePicture } =
     await request.json();
 
   try {
@@ -24,12 +24,20 @@ export const POST = async (request, { params }) => {
       // Add the like if the user hasn't liked the post
       existingPrompt.likes.push(userId);
 
+      let message;
+      if (existingPrompt.creator.toString() === userId) {
+        // Display a specific message when the creator likes their own post
+        message = 'You liked your post: "' + existingPrompt.prompt + '".';
+      } else {
+        // Create a notification for the post creator
+        message = `${username} liked your post: "${existingPrompt.prompt}."`;
+      }
+
       // Create a notification for the post creator
       const notification = new Notification({
         recipient: existingPrompt.creator, // Assuming 'userId' is the creator's ID
-        message: `${username} liked your post: "${existingPrompt.prompt}."`,
+        message: message,
         createdAt: date,
-        viewed: viewed,
         profilePicture: profilePicture,
         likedBy: {
           userId: userId,
